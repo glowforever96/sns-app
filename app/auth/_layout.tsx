@@ -40,6 +40,14 @@ export default function AuthLayout() {
           headerBackButtonDisplayMode: "minimal",
         }}
       />
+      {/* <Stack.Screen
+        name="test"
+        options={{
+          title: "테스트",
+          headerShown: true,
+          headerBackButtonDisplayMode: "minimal",
+        }}
+      /> */}
     </Stack>
   );
 }
