@@ -6,7 +6,7 @@ import {
 
 export default function TestScreen() {
   const insets = useSafeAreaInsets();
-  console.log(insets);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
