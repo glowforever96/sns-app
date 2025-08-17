@@ -13,7 +13,6 @@ async function getPosts(page = 1): Promise<Post[]> {
 
 async function deletePost(id: number): Promise<number> {
   const { data } = await axiosInstance.delete(`/posts/${id}`);
-  console.log(data);
   return data;
 }
 
