@@ -1,7 +1,10 @@
 import { colors } from "@/constants";
 import useAuth from "@/hooks/queries/useAuth";
+import useDeletePost from "@/hooks/queries/useDeletePost";
 import { Post } from "@/types";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Profile from "./Profile";
 
@@ -13,6 +16,32 @@ function FeedItem({ post }: FeedItemProps) {
   const { auth } = useAuth();
   const likeUsers = post.likes?.map((like) => Number(like.userId));
   const isLiked = likeUsers?.includes(Number(auth.id));
+  const { showActionSheetWithOptions } = useActionSheet();
+  const deletePost = useDeletePost();
+
+  const handlePressOption = () => {
+    const options = ["삭제", "수정", "취소"];
+    const destructiveButtonIndex = 0;
+    const cancelButtonIndex = 2;
+
+    showActionSheetWithOptions(
+      { options, destructiveButtonIndex, cancelButtonIndex },
+      (selectedIndex?: number) => {
+        switch (selectedIndex) {
+          case destructiveButtonIndex: // 삭제
+            deletePost.mutate(post.id);
+            break;
+          case 1: // 수정
+            router.push(`/post/update/${post.id}`);
+            break;
+          case cancelButtonIndex: // 취소
+            break;
+          default:
+            break;
+        }
+      }
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -21,6 +50,16 @@ function FeedItem({ post }: FeedItemProps) {
           imageUri={post.author.imageUri}
           nickname={post.author.nickname}
           createdAt={post.createdAt}
+          option={
+            auth.id === post.author.id && (
+              <Ionicons
+                name="ellipsis-vertical"
+                size={24}
+                color={colors.BLACK}
+                onPress={handlePressOption}
+              />
+            )
+          }
           onPress={() => {}}
         />
         <Text style={styles.title}>{post.title}</Text>
