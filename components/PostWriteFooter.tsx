@@ -3,12 +3,23 @@ import useUploadImages from "@/hooks/queries/useUploadImages";
 import { getFormDataImages } from "@/utils/image";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useFormContext, useWatch } from "react-hook-form";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PostWriteFooter() {
   const inset = useSafeAreaInsets();
+  const { control, setValue } = useFormContext();
+  const [imageUris] = useWatch({ control, name: ["imageUris"] });
   const uploadImages = useUploadImages();
+
+  const addImageUris = (uris: string[]) => {
+    if (imageUris.length + uris.length > 5) {
+      Alert.alert("이미지 개수 초과", "추가 가능한 이미지는 최대 5개입니다.");
+      return;
+    }
+    setValue("imageUris", [...imageUris, ...uris.map((uri) => ({ uri }))]);
+  };
 
   const handleOpenImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -20,7 +31,7 @@ export default function PostWriteFooter() {
     }
     const formData = getFormDataImages("images", result.assets);
     uploadImages.mutate(formData, {
-      onSuccess: (data: string[]) => console.log(data),
+      onSuccess: (data: string[]) => addImageUris(data),
     });
   };
 
