@@ -1,4 +1,4 @@
-import { CreatePostDto, Post } from "@/types";
+import { CreatePostDto, CreateVoteDto, Post, VoteOption } from "@/types";
 import axiosInstance from "./axios";
 
 async function createPost(body: CreatePostDto) {
@@ -31,4 +31,22 @@ async function updatePost({ id, body }: RequestUpdatePost): Promise<number> {
   return data;
 }
 
-export { createPost, deletePost, getPost, getPosts, updatePost };
+async function createVote({
+  postId,
+  voteOptionId,
+}: CreateVoteDto): Promise<{ postId: number; voteOption: VoteOption }> {
+  console.log("createVote API 호출:", { postId, voteOptionId });
+
+  try {
+    const { data } = await axiosInstance.post(
+      `/posts/${postId}/vote/${voteOptionId}`
+    );
+    console.log("createVote API 응답 성공:", data);
+    return data;
+  } catch (error) {
+    console.error("createVote API 에러:", error);
+    throw error;
+  }
+}
+
+export { createPost, createVote, deletePost, getPost, getPosts, updatePost };

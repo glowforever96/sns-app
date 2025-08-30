@@ -1,10 +1,12 @@
 import { colors } from "@/constants";
 import useAuth from "@/hooks/queries/useAuth";
+import useCreateVote from "@/hooks/queries/useCreateVote";
 import { PostVote } from "@/types";
 import { Feather } from "@expo/vector-icons";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import CustomButton from "./CustomButton";
+import VoteOption from "./VoteOption";
 
 interface VoteProps {
   postId: number;
@@ -14,6 +16,14 @@ interface VoteProps {
 
 export default function Vote({ postId, postVotes, voteCount }: VoteProps) {
   const { auth } = useAuth();
+  const [selectedVoteId, setSelectedVoteId] = useState<number>();
+  const createVote = useCreateVote();
+
+  const handleVote = () => {
+    console.log(selectedVoteId);
+    createVote.mutate({ postId: postId, voteOptionId: Number(selectedVoteId) });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.label}>
@@ -31,9 +41,24 @@ export default function Vote({ postId, postVotes, voteCount }: VoteProps) {
         return (
           <Fragment key={vote.id}>
             {vote.options.map((option) => {
-              return <Text key={option.id}>{option.content}</Text>;
+              return (
+                <VoteOption
+                  key={option.id}
+                  isVoted={isVoted}
+                  isSelected={selectedVoteId === option.id}
+                  onSelectOption={() => setSelectedVoteId(Number(option.id))}
+                  option={option}
+                  totalCount={voteCount}
+                />
+              );
             })}
-            {!isVoted && <CustomButton label="투표하기" onPress={() => {}} />}
+            {!isVoted && (
+              <CustomButton
+                label="투표하기"
+                disabled={!selectedVoteId}
+                onPress={handleVote}
+              />
+            )}
           </Fragment>
         );
       })}
