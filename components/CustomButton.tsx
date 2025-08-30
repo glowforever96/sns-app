@@ -1,16 +1,25 @@
 import { colors } from "@/constants";
-import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  StyleProp,
+  StyleSheet,
+  Text,
+  ViewStyle,
+} from "react-native";
 
 interface CustomButtonProps extends PressableProps {
   label: string;
   size?: "medium" | "large";
-  variant?: "standard" | "filled";
+  variant?: "standard" | "filled" | "outlined";
+  style?: StyleProp<ViewStyle>;
 }
 
 export default function CustomButton({
   label,
   size = "large",
   variant = "filled",
+  style = null,
   ...props
 }: CustomButtonProps) {
   return (
@@ -21,6 +30,7 @@ export default function CustomButton({
         styles[variant],
         props.disabled && styles.disabled,
         pressed && styles.pressed,
+        style,
       ]}
       {...props}
     >
@@ -39,7 +49,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 44,
   },
-  medium: {},
+  medium: {
+    height: 38,
+    alignSelf: "center",
+    paddingHorizontal: 12,
+  },
   filled: {
     backgroundColor: colors.ORANGE_600,
   },
@@ -47,6 +61,11 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   standard: {},
+  outlined: {
+    backgroundColor: colors.WHITE,
+    borderWidth: 1,
+    borderColor: colors.ORANGE_600,
+  },
   disabled: {
     backgroundColor: colors.GRAY_300,
   },
@@ -59,5 +78,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: colors.WHITE,
+  },
+  outlinedText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: colors.ORANGE_600,
   },
 });
