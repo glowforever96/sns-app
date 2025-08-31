@@ -20,7 +20,6 @@ export default function Vote({ postId, postVotes, voteCount }: VoteProps) {
   const createVote = useCreateVote();
 
   const handleVote = () => {
-    console.log(selectedVoteId);
     createVote.mutate({ postId: postId, voteOptionId: Number(selectedVoteId) });
   };
 

@@ -50,8 +50,6 @@ async function createVote({
   postId,
   voteOptionId,
 }: CreateVoteDto): Promise<{ postId: number; voteOption: VoteOption }> {
-  console.log("createVote API 호출:", { postId, voteOptionId });
-
   try {
     const { data } = await axiosInstance.post(
       `/posts/${postId}/vote/${voteOptionId}`
