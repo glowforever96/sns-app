@@ -87,7 +87,7 @@ function FeedItem({ post, isDetail = false }: FeedItemProps) {
               />
             )
           }
-          onPress={() => {}}
+          onPress={() => router.push(`/profile/${post.author.id}`)}
         />
         <Text style={styles.title}>{post.title}</Text>
         <Text style={styles.description} numberOfLines={3}>

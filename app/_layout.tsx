@@ -39,12 +39,13 @@ function RootNavigator() {
         type: "success",
         text1: `${auth.nickname ?? "회원"}님 환영합니다!`,
       });
-  }, [auth.id]);
+  }, [auth]);
 
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="auth" options={{ headerShown: false }} />
+      <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="post" options={{ headerShown: false }} />
       <Stack.Screen name="image" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
