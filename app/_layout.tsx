@@ -39,7 +39,7 @@ function RootNavigator() {
         type: "success",
         text1: `${auth.nickname ?? "회원"}님 환영합니다!`,
       });
-  }, [auth]);
+  }, [auth.id]);
 
   return (
     <Stack>
