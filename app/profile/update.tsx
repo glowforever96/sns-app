@@ -44,7 +44,7 @@ export default function ProfileUpdateScreen() {
                 ? {
                     uri: `${
                       Platform.OS === "ios" ? baseUrls.ios : baseUrls.android
-                    }${auth.imageUri}`,
+                    }/${auth.imageUri}`,
                   }
                 : require("@/assets/images/default-avatar.png")
             }
