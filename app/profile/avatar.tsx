@@ -1,3 +1,4 @@
+import { baseUrls } from "@/api/axios";
 import AvatarItem from "@/components/AvatarItem";
 import FixedBottomCTA from "@/components/FixedBottomCTA";
 import Tab from "@/components/Tab";
@@ -7,8 +8,9 @@ import useGetAvatarItems from "@/hooks/queries/useGetAvatarItems";
 import { Profile } from "@/types";
 import { useNavigation } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Platform, StyleSheet, View } from "react-native";
 import PagerView from "react-native-pager-view";
+import { SvgUri } from "react-native-svg";
 import Toast from "react-native-toast-message";
 
 export default function AvatarScreen() {
@@ -17,14 +19,13 @@ export default function AvatarScreen() {
   const [activeTab, setActiveTab] = useState(0);
   const pagerRef = useRef<PagerView>(null);
   const { auth, profileMutation } = useAuth();
-
   const [avatarItem, setAvatarItem] = useState({
     hatId: auth?.hatId ?? "",
     faceId: auth?.faceId ?? "",
     topId: auth?.topId ?? "",
     bottomId: auth?.bottomId ?? "",
     handId: auth?.handId ?? "",
-    skinId: auth?.skinId ?? "",
+    skinId: auth?.skinId ?? "01",
   });
 
   const getImageId = (url: string) => {
@@ -52,7 +53,13 @@ export default function AvatarScreen() {
     });
   };
 
-  console.log(avatarItem);
+  const getAvatarItemUrl = (category: string, id?: string) => {
+    const baseUrl = Platform.OS === "ios" ? baseUrls.ios : baseUrls.android;
+    if (category === "default" || !Boolean(id)) {
+      return `${baseUrl}/default/frame.svg`;
+    }
+    return `${baseUrl}/items/${category}/${id}.svg`;
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -65,6 +72,51 @@ export default function AvatarScreen() {
   return (
     <>
       <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.avatarContainer}>
+            {avatarItem.hatId && (
+              <SvgUri
+                uri={getAvatarItemUrl("hats", avatarItem.hatId as string)}
+                style={[styles.avatar, { zIndex: 70 }]}
+              />
+            )}
+            {avatarItem.faceId && (
+              <SvgUri
+                uri={getAvatarItemUrl("faces", avatarItem.faceId as string)}
+                style={[styles.avatar, { zIndex: 60 }]}
+              />
+            )}
+            {avatarItem.topId && (
+              <SvgUri
+                uri={getAvatarItemUrl("tops", avatarItem.topId as string)}
+                style={[styles.avatar, { zIndex: 50 }]}
+              />
+            )}
+            {avatarItem.bottomId && (
+              <SvgUri
+                uri={getAvatarItemUrl("bottoms", avatarItem.bottomId as string)}
+                style={[styles.avatar, { zIndex: 40 }]}
+              />
+            )}
+            <SvgUri
+              uri={getAvatarItemUrl("default")}
+              style={[styles.avatar, { zIndex: 30 }]}
+            />
+            {avatarItem.skinId && (
+              <SvgUri
+                uri={getAvatarItemUrl("skins", avatarItem.skinId as string)}
+                style={[styles.avatar, { zIndex: 20 }]}
+              />
+            )}
+            {avatarItem.handId && (
+              <SvgUri
+                uri={getAvatarItemUrl("hands", avatarItem.handId as string)}
+                style={[styles.avatar, { zIndex: 10 }]}
+              />
+            )}
+          </View>
+        </View>
+
         <View style={styles.tabContainer}>
           {["모자", "얼굴", "상의", "하의", "손", "피부"].map((tab, idx) => (
             <Tab
@@ -76,90 +128,36 @@ export default function AvatarScreen() {
             </Tab>
           ))}
         </View>
+
         <PagerView
           ref={pagerRef}
           style={styles.pagerView}
           initialPage={0}
           onPageSelected={(e) => setActiveTab(e.nativeEvent.position)}
         >
-          <FlatList
-            data={hats}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.hatId}
-                onPress={() => handlePressItem("hatId", item)}
-              />
-            )}
-          />
-          <FlatList
-            data={faces}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.faceId}
-                onPress={() => handlePressItem("faceId", item)}
-              />
-            )}
-          />
-          <FlatList
-            data={tops}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.topId}
-                onPress={() => handlePressItem("topId", item)}
-              />
-            )}
-          />
-          <FlatList
-            data={bottoms}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.bottomId}
-                onPress={() => handlePressItem("bottomId", item)}
-              />
-            )}
-          />
-          <FlatList
-            data={hands}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.handId}
-                onPress={() => handlePressItem("handId", item)}
-              />
-            )}
-          />
-          <FlatList
-            data={skins}
-            keyExtractor={(_, idx) => String(idx)}
-            numColumns={3}
-            contentContainerStyle={styles.listContainer}
-            renderItem={({ item }) => (
-              <AvatarItem
-                uri={item}
-                isSelected={getImageId(item) === avatarItem.skinId}
-                onPress={() => handlePressItem("skinId", item)}
-              />
-            )}
-          />
+          {[
+            { data: hats, name: "hatId", id: avatarItem.hatId },
+            { data: faces, name: "faceId", id: avatarItem.faceId },
+            { data: tops, name: "topId", id: avatarItem.topId },
+            { data: bottoms, name: "bottomId", id: avatarItem.bottomId },
+            { data: hands, name: "handId", id: avatarItem.handId },
+            { data: skins, name: "skinId", id: avatarItem.skinId },
+          ].map((list) => (
+            <FlatList
+              key={list.name}
+              data={list.data}
+              keyExtractor={(_, idx) => String(idx)}
+              numColumns={3}
+              contentContainerStyle={styles.listContainer}
+              renderItem={({ item }) => (
+                <AvatarItem
+                  uri={item}
+                  isSelected={getImageId(item) === list.id}
+                  onPress={() => handlePressItem(list.name, item)}
+                />
+              )}
+            />
+          ))}
         </PagerView>
       </View>
       <FixedBottomCTA label="저장" onPress={handleSaveAvatar} />
@@ -170,6 +168,29 @@ export default function AvatarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
+    alignItems: "center",
+    position: "relative",
+    backgroundColor: colors.ORANGE_200,
+    width: "100%",
+    height: 115,
+    marginBottom: 115,
+  },
+  avatarContainer: {
+    width: 229,
+    height: 229,
+    borderRadius: 229,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: colors.GRAY_200,
+    backgroundColor: colors.WHITE,
+    position: "relative",
+  },
+  avatar: {
+    width: 229,
+    height: 229,
+    position: "absolute",
   },
   tabContainer: {
     flexDirection: "row",
