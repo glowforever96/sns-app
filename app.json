@@ -9,14 +9,18 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.expo.snsapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "package": "dev.expo.snsapp",
+      "googleServicesFile": "./google-services.json",
+      "edgeToEdgeEnabled": true,
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "bundler": "metro",
@@ -39,6 +43,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0c9832e2-91b6-4ba1-b819-10b9d16e2b50"
+      }
     }
   }
 }
